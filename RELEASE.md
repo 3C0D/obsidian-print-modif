@@ -1,1 +1,2 @@
-- Open Electron preview in debug mode to see the generated HTML and CSS.
+- Sync CSS in by 3C0D
+- Print selection of text by 3C0D
