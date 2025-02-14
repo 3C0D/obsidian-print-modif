@@ -124,7 +124,6 @@ function extractHeaderColors(content: string): Map<number, string> {
             }
         }
     }
-    console.log("headerColors", headerColors)
     return headerColors;
 }
 
