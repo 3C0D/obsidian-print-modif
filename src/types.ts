@@ -7,6 +7,12 @@ export interface PrintPluginSettings {
     h4Size: string;
     h5Size: string;
     h6Size: string;
+    h1Color: string;
+    h2Color: string;    
+    h3Color: string;
+    h4Color: string;
+    h5Color: string;
+    h6Color: string;
     combineFolderNotes: boolean;
     hrPageBreaks: boolean;
     debugMode: boolean;
@@ -23,6 +29,12 @@ export const DEFAULT_SETTINGS: PrintPluginSettings = {
     h4Size: '14px',
     h5Size: '14px',
     h6Size: '12px',
+    h1Color: 'black',
+    h2Color: 'black',
+    h3Color: 'black',        
+    h4Color: 'black',
+    h5Color: 'black',
+    h6Color: 'black',
     combineFolderNotes: false,
     hrPageBreaks: false,
     debugMode: false,

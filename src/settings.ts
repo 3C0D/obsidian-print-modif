@@ -1,6 +1,6 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import PrintPlugin from './main';
-import { getPrintSnippet, isPrintSnippetEnabled } from './utils/generatePrintStyles';
+import { getHeadersCSS, getPrintSnippet, isPrintSnippetEnabled } from './utils/generatePrintStyles';
 
 export class PrintSettingTab extends PluginSettingTab {
     plugin: PrintPlugin;
@@ -38,19 +38,52 @@ export class PrintSettingTab extends PluginSettingTab {
 
 
 
-        const headings = ['h1Size', 'h2Size', 'h3Size', 'h4Size', 'h5Size', 'h6Size'] as const;
+        const hSizes = ['h1Size', 'h2Size', 'h3Size', 'h4Size', 'h5Size', 'h6Size'] as const;
 
-        headings.forEach((heading, index) => {
+        hSizes.forEach((hSize, index) => {
             new Setting(containerEl)
                 .setName(`Heading ${index + 1} size`)
                 .setDesc(`Set the size for <h${index + 1}> elements.`)
                 .addText(text => text
-                    .setPlaceholder(`${this.plugin.settings[heading]}`)
-                    .setValue(this.plugin.settings[heading])
+                    .setPlaceholder(`${this.plugin.settings[hSize]}`)
+                    .setValue(this.plugin.settings[hSize])
                     .onChange(async (value) => {
-                        this.plugin.settings[heading] = value;
+                        this.plugin.settings[hSize] = value;
                         await this.plugin.saveSettings();
                     }));
+        });
+
+        const hColors = ['h1Color', 'h2Color', 'h3Color', 'h4Color', 'h5Color', 'h6Color'] as const;
+
+        new Setting(containerEl)
+            .setName('Get colors from installed theme')
+            .setDesc('Even in Dark Mode, light mode colors are used to prevent light-colored titles.')
+            .addButton(button => button
+                .setButtonText('Get colors')
+                .onClick(async () => {
+                    const headers = getHeadersCSS(this.app);
+                    hColors.forEach((hColor, index) => {
+                        const realColor = headers.get(index + 1) ?? "#000000"; // Fallback to black if not found
+                        console.log(`Real color for h${index + 1}:`, realColor);
+                        this.plugin.settings[hColor] = realColor;
+                    });
+                    await this.plugin.saveSettings();
+                    // Refresh the color pickers
+                    this.display();
+                })
+            );
+
+        hColors.forEach((hColor, index) => {
+            new Setting(containerEl)
+                .setName(`Heading ${index + 1} color`)
+                .setDesc(`Set the color for <h${index + 1}> elements.`)
+                .addColorPicker(color => color
+                    .setValue(`${this.plugin.settings[hColor]}`)
+                    .onChange(async (value) => {
+                        this.plugin.settings[hColor] = value;
+                        await this.plugin.saveSettings();
+                    })
+                );
         });
 
         new Setting(containerEl)
