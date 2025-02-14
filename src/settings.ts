@@ -118,7 +118,7 @@ export class PrintSettingTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Custom CSS')
-            .setDesc(`You can add a custom 'print.css' to appearance > CSS snippets, then this toggle will be enabled and synced with CSS snippets. The easier way is to add your styles using @media print {body {...}}.`)
+            .setDesc(`You can add a custom "print.css" to "Appearance > CSS snippets", then this toggle will be enabled and synced with CSS snippets. The easier way is to add your styles using @media print {body {...}}.`)
             .addToggle(toggle => toggle
                 .setValue(getPrintSnippet(this.app) && isPrintSnippetEnabled(this.app))
                 .onChange(async (value) => {

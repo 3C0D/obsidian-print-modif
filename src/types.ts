@@ -17,7 +17,6 @@ export interface PrintPluginSettings {
     hrPageBreaks: boolean;
     debugMode: boolean;
     usePreview: boolean;
-    useEnhancedRendering: boolean;
 }
 
 export const DEFAULT_SETTINGS: PrintPluginSettings = {
@@ -38,6 +37,5 @@ export const DEFAULT_SETTINGS: PrintPluginSettings = {
     combineFolderNotes: false,
     hrPageBreaks: false,
     debugMode: false,
-    usePreview: true,
-    useEnhancedRendering: true
+    usePreview: true
 };
