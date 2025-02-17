@@ -2,21 +2,15 @@ import { App, Notice, PluginManifest } from "obsidian";
 import { PrintPluginSettings } from "src/types";
 import { CustomCSS } from "obsidian-typings";
 
-/**
- * Retrieves styles.css from plugin and the optional print.css snippet. 
- * Add font size styles from settings and return a css string.
- * 
- * @param app 
- * @param manifest 
- * @param settings 
- * @returns 
- */
-export async function generatePrintStyles(app: App, manifest: PluginManifest, settings: PrintPluginSettings): Promise<string> {
+export async function generatePrintStyles(
+    app: App,
+    manifest: PluginManifest,
+    settings: PrintPluginSettings
+): Promise<string> {
     const adapter = app.vault.adapter;
 
+    // Read plugin stylesheet
     let pluginStyle = '';
-    let userStyle = '';
-
     if (manifest.dir) {
         const cssPath = `${manifest.dir}/styles.css`;
         try {
@@ -28,55 +22,50 @@ export async function generatePrintStyles(app: App, manifest: PluginManifest, se
         new Notice('Could not find the plugin path. No default print styles will be added.');
     }
 
-    // Read user styles (optional)
-    // Only include if the print.css is activated and still exists.
-    if (getPrintSnippet(app) && isPrintSnippetEnabled(app)) {
-        userStyle = getPrintSnippetValue(app) ?? '';
-    }
+    // Read user print stylesheet (optional)
+    const userStyle =
+        getPrintSnippet(app) && isPrintSnippetEnabled(app)
+            ? getPrintSnippetValue(app) ?? ''
+            : '';
 
+    // Generate CSS for headings with sizes and colors from settings
+    const headingsCSS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
+        .map((tag) => {
+            const sizeKey = `${tag}Size` as keyof PrintPluginSettings;
+            const colorKey = `${tag}Color` as keyof PrintPluginSettings;
+            return `.obsidian-print ${tag} { font-size: ${settings[sizeKey]}; color: ${settings[colorKey]}; }`;
+        })
+        .join('\n');
+
+    // Final combined CSS - Remove the forced black color directive
     return `
-        body { font-size: ${settings.fontSize}; }
-        h1 { font-size: ${settings.h1Size}; }
-        h2 { font-size: ${settings.h2Size}; }
-        h3 { font-size: ${settings.h3Size}; }
-        h4 { font-size: ${settings.h4Size}; }
-        h5 { font-size: ${settings.h5Size}; }
-        h6 { font-size: ${settings.h6Size}; }
-        h1 { color: ${settings.h1Color}; }
-        h2 { color: ${settings.h2Color}; }
-        h3 { color: ${settings.h3Color}; }
-        h4 { color: ${settings.h4Color}; }
-        h5 { color: ${settings.h5Color}; }
-        h6 { color: ${settings.h6Color}; }
-        hr { page-break-before: ${settings.hrPageBreaks ? 'always' : 'auto'}; border-width: ${settings.hrPageBreaks ? '0' : 'revert-layer'}; }
+        .obsidian-print { font-size: ${settings.fontSize}; }
+        ${headingsCSS}
+        ${settings.hrPageBreaks ? '.obsidian-print hr { page-break-before: always; border: none; }' : ''}
         ${pluginStyle}
         ${userStyle}
     `;
 }
 
-
-function getPrintSnippetValue(app: App,): string | undefined {
+function getPrintSnippetValue(app: App): string | undefined {
     const printCssPath = ".obsidian/snippets/print.css";
     return app.customCss.csscache.get(printCssPath);
 }
 
-
 export function isPrintSnippetEnabled(app: App): boolean {
-    return app.customCss.enabledSnippets.has("print")
+    return app.customCss.enabledSnippets.has("print");
 }
 
 export function getPrintSnippet(app: App): boolean {
     return app.customCss.snippets.contains("print");
 }
 
-
 //------ Find headers css ------------------------
-
 
 /**
  * Gets all header colors from the current theme, handling dark mode
  */
-export function getHeadersCSS(app: App) {
+export function getHeadersCSS(app: App): Map<number, string> {
     const css = getCustomCSS(app);
     const headerColors = extractHeaderColors(css);
     const isDark = isDarkMode();
@@ -115,7 +104,8 @@ function extractHeaderColors(content: string): Map<number, string> {
     // Else second pass: detect direct header styles
     // Match .cm-header-N or .markdown-preview-view h1-h6 selectors
     if (foundHeaders === 0) {
-        const directStyleRegex = /(?:\.cm-header-(\d)|\.markdown-preview-view\s+h(\d))(?:[^{]*,\s*[^{]*)*{[^}]*?color:\s*([^;]+)/g; while ((match = directStyleRegex.exec(content)) !== null && foundHeaders < 6) {
+        const directStyleRegex = /(?:\.cm-header-(\d)|\.markdown-preview-view\s+h(\d))(?:[^{]*,\s*[^{]*)*{[^}]*?color:\s*([^;]+)/g;
+        while ((match = directStyleRegex.exec(content)) !== null && foundHeaders < 6) {
             const level = parseInt(match[1] || match[2]);
             const color = match[3].trim();
             if (level >= 1 && level <= 6) {
@@ -124,9 +114,9 @@ function extractHeaderColors(content: string): Map<number, string> {
             }
         }
     }
+
     return headerColors;
 }
-
 
 export function isDarkMode(): boolean {
     return document.body.classList.contains('theme-dark');
@@ -145,12 +135,10 @@ export function getCSSVariableValue(variableName: string, isDark: boolean): stri
                 temp.style.color = variableName;
             } else if (variableName.startsWith('#')) {
                 return variableName;
-            } 
-            else if (variableName.startsWith('rgb')) {
+            } else if (variableName.startsWith('rgb')) {
                 return rgbToHex(variableName);
-            }
-            else { // e.g "red"
-                temp.style.color = variableName
+            } else { // e.g "red"
+                temp.style.color = variableName;
             }
 
             const computedColor = window.getComputedStyle(temp).color;
@@ -198,8 +186,3 @@ export function rgbToHex(rgb: string): string {
 
     return `#${r}${g}${b}`;
 }
-
-
-
-
-

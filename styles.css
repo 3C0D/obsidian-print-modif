@@ -1,84 +1,149 @@
-@media print {
+/* Ensure print text color: force all non-headings to black */
+.obsidian-print *:not(h1, h2, h3, h4, h5, h6) {
+    color: black !important;
+}
 
-    body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Microsoft YaHei Light", sans-serif;
-        margin: 20px;
-    }
+/* Base styles for both preview and print */
+.obsidian-print {
+    font-family: var(--print-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+    margin: 20px;
+    line-height: 1.5;
+    background-color: white;
+    color: rgb(0, 0, 0);
+}
 
-    /*
-    Obsidian
-    */
-    .markdown-preview-sizer {
-        min-height: 0 !important;
-        padding: 0 !important;
-    }
+/* Headers */
+.obsidian-print h1,
+.obsidian-print h2,
+.obsidian-print h3,
+.obsidian-print h4,
+.obsidian-print h5,
+.obsidian-print h6 {
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    page-break-after: avoid;
+}
 
-    .collapse-indicator {
-        display: none;
-    }
+/* Links */
+.obsidian-print a {
+    text-decoration: none;
+}
 
-    .metadata-container {
-        display: none;
-    }
+/* Code blocks */
+.obsidian-print pre,
+.obsidian-print code {
+    background-color: #f6f8fa !important;
+    border: 1px solid #e1e4e8;
+    border-radius: 3px;
+    padding: 0.2em 0.4em;
+    font-family: var(--print-code-font, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace);
+    color: #24292e;
+}
 
-    pre button {
-        display: none
-    }
+.obsidian-print pre code {
+    border: none;
+    padding: 0;
+}
 
-    /*
-    Obsidian Print
-    */
-    .obsidian-print-page-break {
-        page-break-before: always;
-    }
+/* Hide UI elements */
+.obsidian-print pre button {
+    display: none;
+}
 
-    /*
-    Images
-    */
-    img {
-        max-width: 100%;
-    }
+/* Callouts */
+.obsidian-print .callout,
+.print-preview-content .callout {
+    border-radius: 4px;
+    padding: 0;
+    overflow: hidden;
+    margin: 1em 0;
+    background-color: #f4414106 ! important;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.12),
+        0 1px 5px 0 rgba(0, 0, 0, 0.1),
+        0 3px 1px -2px rgba(0, 0, 0, 0.2);
+}
 
-    /*
-    Lists
-    */
-    ul.contains-task-list {
-        list-style-type: none;
-        padding-left: 0;
-    }
+.obsidian-print .callout-title,
+.print-preview-content .callout-title {
+    padding: 0.5em;
+    display: flex;
+    gap: 8px;
+    font-size: inherit;
+    color: black;
+    line-height: 1.3em;
+}
 
-    /*
-    Tables
-    */
-    table {
-        border-collapse: collapse;
-        width: 100%;
-        margin-bottom: 1em;
-    }
+.obsidian-print .callout-content,
+.print-preview-content .callout-content {
+    padding: 0.25em 1em;
+}
 
-    th,
-    td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-    }
+/* Tables */
+.obsidian-print table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+    page-break-inside: avoid;
+}
 
-    th {
-        background-color: #f2f2f2;
-        font-weight: bold;
-    }
+.obsidian-print th,
+.obsidian-print td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
 
-    tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
+.obsidian-print th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
 
-    table,
-    tr,
-    td,
-    th,
-    tbody,
-    thead,
-    tfoot {
-        page-break-inside: avoid;
-    }
+.obsidian-print tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Lists */
+.obsidian-print ul,
+.obsidian-print ol {
+    padding-left: 2em;
+}
+
+.obsidian-print .task-list-item {
+    list-style-type: none;
+}
+
+.obsidian-print .task-list-item-checkbox {
+    margin-right: 0.5em;
+}
+
+/* Images */
+.obsidian-print img {
+    max-width: 100%;
+    page-break-inside: avoid;
+}
+
+/* Page breaks */
+.obsidian-print .page-break,
+.obsidian-print .obsidian-print-page-break {
+    page-break-before: always;
+}
+
+/* Styles pour la prévisualisation d'impression */
+.print-preview-page {
+    background-color: white;
+    margin: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    position: relative;
+    box-sizing: border-box;
+    width: auto;
+    height: auto;
+    overflow: visible;
+}
+
+.print-preview-page-content {
+    padding: 20px;
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
+    overflow: visible;
 }
