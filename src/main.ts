@@ -1,5 +1,5 @@
 import { Plugin, Notice, TFile, TFolder, MarkdownView } from 'obsidian';
-import { PrintSettingTab } from './settings';
+import { initializeThemeColors, PrintSettingTab } from './settings';
 import { PrintPluginSettings, DEFAULT_SETTINGS } from './types';
 import { openPrintModal } from './utils/printModal';
 import { generatePreviewContent } from './utils/generatePreviewContent';
@@ -12,6 +12,11 @@ export default class PrintPlugin extends Plugin {
     async onload() {
         console.log('Print plugin loaded');
         this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+
+        // Initialize header colors with current theme if not done before
+        if (!this.settings.hasInitializedColors) {
+            await initializeThemeColors(this.app, this);
+        }
 
         this.addCommand({
             id: 'print-note',
@@ -75,6 +80,10 @@ export default class PrintPlugin extends Plugin {
         );
     }
 
+    /**
+     * Prints the current note or a specified file
+     * @param file Optional file to print, defaults to active file
+     */
     async printNote(file?: TFile) {
         // if file is the active note, save it too
         if (!file || file === this.app.workspace.getActiveFile()) {
@@ -92,9 +101,13 @@ export default class PrintPlugin extends Plugin {
         }
 
         const cssString = await generatePrintStyles(this.app, this.manifest, this.settings);
+        console.log("cssString", cssString);
         await openPrintModal(content, this.settings, cssString);
     }
 
+    /**
+     * Prints the currently selected text
+     */
     async printSelection() {
         const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (!activeView) {
@@ -117,6 +130,10 @@ export default class PrintPlugin extends Plugin {
         await openPrintModal(content, this.settings, cssString);
     }
 
+    /**
+     * Prints all markdown files in the current folder or specified folder
+     * @param folder Optional folder to print, defaults to active file's folder
+     */
     async printFolder(folder?: TFolder) {
 
         if (!folder) {

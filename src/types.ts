@@ -13,10 +13,9 @@ export interface PrintPluginSettings {
     h4Color: string;
     h5Color: string;
     h6Color: string;
+    hasInitializedColors: boolean;  // to track if colors were initialized
     combineFolderNotes: boolean;
     hrPageBreaks: boolean;
-    debugMode: boolean;
-    usePreview: boolean;
 }
 
 export const DEFAULT_SETTINGS: PrintPluginSettings = {
@@ -34,8 +33,7 @@ export const DEFAULT_SETTINGS: PrintPluginSettings = {
     h4Color: 'black',
     h5Color: 'black',
     h6Color: 'black',
+    hasInitializedColors: false,
     combineFolderNotes: false,
     hrPageBreaks: false,
-    debugMode: false,
-    usePreview: true
 };

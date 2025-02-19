@@ -2,11 +2,36 @@ import dedent from 'dedent';
 import { PrintPluginSettings } from '../types';
 import { Printd } from 'printd';
 
+/**
+ * Opens a modal window with print preview and controls
+ * @param content The HTML content to print
+ * @param settings Plugin settings
+ * @param cssString CSS styles to apply
+ */
 export async function openPrintModal(content: HTMLElement, settings: PrintPluginSettings, cssString: string) {
     const styleManager = new PrintStyleManager(settings);
     const printContent = styleManager.prepareForPrint(content);
+    
+    // Create proper HTML structure
+    const htmlElement = document.createElement('html');
+    const headElement = document.createElement('head');
+    const bodyElement = document.createElement('body');
+    
+    // Setup head
+    const styleElement = document.createElement('style');
+    styleElement.textContent = cssString;
+    headElement.appendChild(styleElement);
+    
+    // Setup body
+    bodyElement.className = 'obsidian-print';
+    bodyElement.appendChild(printContent);
+    
+    // Assemble HTML
+    htmlElement.appendChild(headElement);
+    htmlElement.appendChild(bodyElement);
+    
     const preview = new PrintPreview();
-    preview.createPreview(printContent, cssString, {
+    preview.createPreview(htmlElement, cssString, {
         width: '90%',
         height: '90%',
         scale: 1
@@ -19,6 +44,9 @@ interface PrintPreviewOptions {
     scale?: number;
 }
 
+/**
+ * Handles the print preview window and printing functionality
+ */
 class PrintPreview {
     private previewWindow: HTMLDivElement | null = null;
     private printd: Printd;
@@ -57,7 +85,8 @@ class PrintPreview {
                 top: 0;
                 width: 100%;
                 padding: 10px;
-                border-bottom: 1px solid #90520c;
+                background-color:rgba(66, 67, 65, 0.12);
+                border-bottom: 1px solid rgb(28, 27, 26);
                 display: flex;
                 gap: 10px;
                 justify-content: flex-end;
@@ -112,7 +141,7 @@ class PrintPreview {
         const contentContainer = document.createElement('div');
         contentContainer.className = 'print-preview-content';
 
-        // Création d'une page qui s'auto-dimensionne avec un padding de 20
+        // Create a self-sizing page with 20px padding
         const page = document.createElement('div');
         page.className = 'print-preview-page';
         const pageContent = document.createElement('div');
@@ -139,12 +168,25 @@ class PrintPreview {
     }
 }
 
+/**
+ * Manages the styling of content for printing
+ */
 export class PrintStyleManager {
     constructor(private settings: PrintPluginSettings) {}
 
+    /**
+     * Prepares the content for printing by adding necessary print classes
+     * @param content The HTML content to prepare
+     * @returns The prepared content
+     */
     prepareForPrint(content: HTMLElement): HTMLElement {
         const printContent = content.cloneNode(true) as HTMLElement;
         printContent.classList.add('obsidian-print');
+
+        const mathElements = printContent.querySelectorAll('.math, .math-block');
+        mathElements.forEach(elem => {
+            elem.classList.add('math-print');
+        });
         return printContent;
     }
 }

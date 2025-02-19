@@ -10,6 +10,8 @@ export class PrintSettingTab extends PluginSettingTab {
         this.plugin = plugin;
     }
 
+
+
     display(): void {
         const { containerEl } = this;
 
@@ -56,18 +58,12 @@ export class PrintSettingTab extends PluginSettingTab {
         const hColors = ['h1Color', 'h2Color', 'h3Color', 'h4Color', 'h5Color', 'h6Color'] as const;
 
         new Setting(containerEl)
-            .setName('Get colors from installed theme')
-            .setDesc('Even in Dark Mode, light mode colors are used to prevent light-colored titles.')
+            .setName('Get colors from actual theme')
+            .setDesc('Light mode colors are used.')
             .addButton(button => button
-                .setButtonText('Get colors')
+                .setButtonText('Get theme colors')
                 .onClick(async () => {
-                    const headers = getHeadersCSS(this.app);
-                    hColors.forEach((hColor, index) => {
-                        const realColor = headers.get(index + 1) ?? "#000000"; // Fallback to black if not found
-                        console.log(`Real color for h${index + 1}:`, realColor);
-                        this.plugin.settings[hColor] = realColor;
-                    });
-                    await this.plugin.saveSettings();
+                    await initializeThemeColors(this.app, this.plugin);
                     // Refresh the color pickers
                     this.display();
                 })
@@ -107,24 +103,40 @@ export class PrintSettingTab extends PluginSettingTab {
                 }));
 
         new Setting(containerEl)
-            .setName('Debug mode')
-            .setDesc('Enable debug mode. This will open the print window for inspection.')
-            .addToggle(toggle => toggle
-                .setValue(this.plugin.settings.debugMode)
-                .onChange(async (value) => {
-                    this.plugin.settings.debugMode = value;
-                    await this.plugin.saveSettings();
-                }));
-
-        new Setting(containerEl)
             .setName('Custom CSS')
-            .setDesc(`You can add a custom "print.css" to "Appearance > CSS snippets", then this toggle will be enabled and synced with CSS snippets. The easier way is to add your styles using @media print {body {...}}.`)
+            .setDesc(`You can add a custom "print.css" to "Appearance > CSS snippets". This toggle will be enabled and synced with CSS snippets. Use ".obsidian-print" as prefix for your selectors. e.g: ".obsidian-print a {...}".`)
             .addToggle(toggle => toggle
                 .setValue(getPrintSnippet(this.app) && isPrintSnippetEnabled(this.app))
                 .onChange(async (value) => {
                     this.app.customCss.setCssEnabledStatus("print", value);
                     await this.plugin.saveSettings();
                 }))
+            // Add a button to open the snippets folder    
+            .addButton(button => button
+                .setIcon('folder')
+                .setTooltip('Open snippets folder')
+                .onClick(() => {
+                    this.app.openWithDefaultApp('.obsidian/snippets');
+                }))
             .setDisabled(!getPrintSnippet(this.app));
     }
 }
+
+/**
+ * Initializes or updates heading colors from the current theme
+ * @param app - The Obsidian App instance
+ * @param plugin - The Print Plugin instance
+ * @remarks Colors are extracted from light mode theme to ensure readability in print
+ */
+export async function initializeThemeColors(app: App, plugin: PrintPlugin) {
+    const headers = getHeadersCSS(app);
+    const hColors = ['h1Color', 'h2Color', 'h3Color', 'h4Color', 'h5Color', 'h6Color'] as const;
+
+    hColors.forEach((hColor, index) => {
+        const realColor = headers.get(index + 1) ?? "#000000";
+        plugin.settings[hColor] = realColor;
+    });
+    plugin.settings.hasInitializedColors = true;
+    await plugin.saveSettings();
+}
+

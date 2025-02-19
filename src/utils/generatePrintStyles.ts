@@ -2,6 +2,9 @@ import { App, Notice, PluginManifest } from "obsidian";
 import { PrintPluginSettings } from "src/types";
 import { CustomCSS } from "obsidian-typings";
 
+/**
+ * Generates CSS styles for printing, combining plugin styles, user snippets, and some styles settings
+ */
 export async function generatePrintStyles(
     app: App,
     manifest: PluginManifest,
@@ -79,6 +82,10 @@ export function getHeadersCSS(app: App): Map<number, string> {
     return realColors;
 }
 
+/**
+ * Gets the custom CSS from the active Obsidian theme
+ * Uses Obsidian's customCSS API to access theme styles
+ */
 export function getCustomCSS(app: App): string {
     const theme = app.customCss.theme;
     return app.customCss.csscache.get(`.obsidian/themes/${theme}/theme.css`) ?? '';

@@ -9,7 +9,6 @@
     margin: 20px;
     line-height: 1.5;
     background-color: white;
-    color: rgb(0, 0, 0);
 }
 
 /* Headers */
@@ -32,7 +31,7 @@
 /* Code blocks */
 .obsidian-print pre,
 .obsidian-print code {
-    background-color: #f6f8fa !important;
+    background-color: #ffffff !important;
     border: 1px solid #e1e4e8;
     border-radius: 3px;
     padding: 0.2em 0.4em;
@@ -51,20 +50,18 @@
 }
 
 /* Callouts */
-.obsidian-print .callout,
-.print-preview-content .callout {
+.obsidian-print .callout {
     border-radius: 4px;
     padding: 0;
     overflow: hidden;
     margin: 1em 0;
-    background-color: #f4414106 ! important;
+    background-color: #ffffff;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.12),
         0 1px 5px 0 rgba(0, 0, 0, 0.1),
         0 3px 1px -2px rgba(0, 0, 0, 0.2);
 }
 
-.obsidian-print .callout-title,
-.print-preview-content .callout-title {
+.obsidian-print .callout-title {
     padding: 0.5em;
     display: flex;
     gap: 8px;
@@ -73,8 +70,7 @@
     line-height: 1.3em;
 }
 
-.obsidian-print .callout-content,
-.print-preview-content .callout-content {
+.obsidian-print .callout-content {
     padding: 0.25em 1em;
 }
 
@@ -94,12 +90,12 @@
 }
 
 .obsidian-print th {
-    background-color: #f2f2f2;
+    background-color: #ffffff;
     font-weight: bold;
 }
 
 .obsidian-print tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background-color: #ffffff;
 }
 
 /* Lists */
@@ -126,24 +122,4 @@
 .obsidian-print .page-break,
 .obsidian-print .obsidian-print-page-break {
     page-break-before: always;
-}
-
-/* Styles pour la prévisualisation d'impression */
-.print-preview-page {
-    background-color: white;
-    margin: 20px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
-    position: relative;
-    box-sizing: border-box;
-    width: auto;
-    height: auto;
-    overflow: visible;
-}
-
-.print-preview-page-content {
-    padding: 20px;
-    box-sizing: border-box;
-    width: 100%;
-    height: auto;
-    overflow: visible;
 }
