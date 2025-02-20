@@ -116,6 +116,15 @@ export class PrintSettingTab extends PluginSettingTab {
                         this.display();
                     }, { once: true }); // Use once: true to ensure it only runs once
                 }));
+
+        if (getPrintSnippet(this.app)) {
+            customCSSSetting.addToggle(toggle => toggle
+                .setValue(isPrintSnippetEnabled(this.app))
+                .onChange(async (value) => {
+                    this.app.customCss.setCssEnabledStatus("print", value);
+                    await this.plugin.saveSettings();
+                }));
+        }
     }
 }
 
