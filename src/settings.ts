@@ -102,23 +102,20 @@ export class PrintSettingTab extends PluginSettingTab {
                     await this.plugin.saveSettings();
                 }));
 
-        new Setting(containerEl)
+        const customCSSSetting = new Setting(containerEl)
             .setName('Custom CSS')
-            .setDesc(`You can add a custom "print.css" to "Appearance > CSS snippets". This toggle will be enabled and synced with CSS snippets. Use ".obsidian-print" as prefix for your selectors. e.g: ".obsidian-print a {...}".`)
-            .addToggle(toggle => toggle
-                .setValue(getPrintSnippet(this.app) && isPrintSnippetEnabled(this.app))
-                .onChange(async (value) => {
-                    this.app.customCss.setCssEnabledStatus("print", value);
-                    await this.plugin.saveSettings();
-                }))
-            // Add a button to open the snippets folder    
+            .setDesc(`Click the folder icon to create a "print.css" file in snippets. A toggle will appear here once the file exists to enable/disable your custom styles. Use ".obsidian-print" as prefix for your selectors. e.g: ".obsidian-print a {...}".`)
             .addButton(button => button
                 .setIcon('folder')
                 .setTooltip('Open snippets folder')
-                .onClick(() => {
-                    this.app.openWithDefaultApp('.obsidian/snippets');
-                }))
-            .setDisabled(!getPrintSnippet(this.app));
+                .onClick(async () => {
+                    await this.app.openWithDefaultApp('.obsidian/snippets');
+                    // Add event listener for when focus returns to the window
+                    window.addEventListener('focus', () => {
+                        // Refresh the settings display
+                        this.display();
+                    }, { once: true }); // Use once: true to ensure it only runs once
+                }));
     }
 }
 

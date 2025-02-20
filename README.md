@@ -46,8 +46,28 @@ If you print often, you probably want to add a shortcode to the print action. Go
 
 ## Customize CSS
 
-In the settings, you can adjust the font size for all headings and text, and optionally hide the title.
+You can customize the appearance of your printed notes in two ways:
 
-To further customize the appearance of your printed notes, you can create a `print.css` snippet. The printed document's body contains the `obsidian-print` class. Be sure to either add wrap your CSS in `@media print` or prefix your print-specific CSS with `obsidian-print` class so that it only applies to printed content. You can view the default styles [in this file](/styles.css). Every individual note contains the `obsidian-print-note` class.
+### 1. Built-in Settings
+- Adjust font sizes for text and all heading levels
+- Set custom colors for each heading level
+- Import colors directly from your current theme using the "Get theme colors" button
+- Toggle title visibility and page breaks
 
-If you have trouble with the styling, enable Debug Mode to log the HTML of the printed notes.
+### 2. Custom CSS Snippet
+To add your own custom styles:
+1. Go to Settings > Appearance > CSS snippets (or click the folder icon in plugin settings)
+2. Create a new file named `print.css`
+3. Add your custom styles using the `.obsidian-print` prefix
+4. Enable the snippet in CSS snippets
+5. Enable "Custom CSS" in plugin settings
+
+Example of custom styles:
+```css
+.obsidian-print strong {
+    color: #452d48b2 !important;
+}
+
+.obsidian-print a {
+    font-weight: 600;
+}
